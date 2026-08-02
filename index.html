@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>わくわく面接対策アプリ</title>
+<style>
+  :root {
+    --primary: #FF9800;
+    --secondary: #03A9F4;
+    --bg: #FFF3E0;
+    --text: #333;
+    --white: #fff;
+    --card-bg: #ffffffaa;
+  }
+  body {
+    margin: 0;
+    font-family: 'Hiragino Maru Gothic ProN', 'Rounded M+ 1c', 'Meiryo', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    background-image: radial-gradient(#FFCC80 20%, transparent 20%),
+                      radial-gradient(#FFCC80 20%, transparent 20%);
+    background-size: 20px 20px;
+    background-position: 0 0, 10px 10px;
+  }
+  #app {
+    max-width: 600px;
+    margin: 40px auto;
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    overflow: hidden;
+    position: relative;
+    padding: 20px;
+  }
+  .screen {
+    display: none;
+    text-align: center;
+    animation: fadeIn 0.5s ease-out;
+  }
+  .screen.active {
+    display: block;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  h1, h2 {
+    color: var(--primary);
+  }
+  .btn {
+    display: inline-block;
+    background: var(--secondary);
+    color: var(--white);
+    padding: 15px 30px;
+    border-radius: 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 5px 15px rgba(3, 169, 244, 0.4);
+    transition: transform 0.1s, box-shadow 0.1s;
+    margin: 10px;
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 20px rgba(3, 169, 244, 0.6);
+  }
+  .btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 10px rgba(3, 169, 244, 0.4);
+  }
+  .option-btn {
+    display: block;
+    width: 100%;
+    background: #f5f5f5;
+    color: var(--text);
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px 0;
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+  }
+  .option-btn:hover {
+    background: #e1f5fe;
+    border-color: var(--secondary);
+  }
+  .question-text {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    padding: 20px;
+    background: #FFF9C4;
+    border-radius: 10px;
+    border-left: 6px solid var(--primary);
+  }
+  .timer {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #E91E63;
+    margin: 10px 0;
+    background: #ffebee;
+    border-radius: 10px;
+    padding: 10px;
+    display: inline-block;
+  }
+  .progress-container {
+    width: 100%;
+    background: #e0e0e0;
+    border-radius: 10px;
+    height: 10px;
+    margin-bottom: 20px;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 10px;
+    width: 0%;
+    transition: width 0.3s;
+  }
+  .feedback-box {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    padding: 20px;
+    border-radius: 10px;
+    background: #E8F5E9;
+    color: #2E7D32;
+    font-weight: bold;
+    font-size: 1.2rem;
+    display: none;
+    white-space: pre-wrap;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+  .description-box {
+    background: #fff8e1;
+    border: 2px dashed var(--primary);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 15px 0;
+    text-align: left;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  .step-desc {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 15px;
+    line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- トップ画面 -->
+  <div id="screen-top" class="screen active">
+    <h1>✨ わくわく面接対策アプリ ✨</h1>
+    
+    <img src="https://raw.githubusercontent.com/t3takahashit3-cell/20260803/main/top.png" alt="トップ画像" style="width:100%; max-width:350px; margin:10px auto; border-radius:10px; display:block;">
+    
+    <div class="description-box">
+      <strong style="color:var(--primary); font-size:1.1rem;">🎮 ゲームの流れ</strong><br><br>
+      <strong>【Step1】深掘り体験ドリル</strong><br>
+      面接官からの「なぜ？」「具体的には？」という鋭いツッコミ（深掘り）を体験します。質問の意図を知り、自分の回答の引き出しを増やしましょう！<br><br>
+      <strong>【Step2】本番シミュレーション</strong><br>
+      1問20秒の制限時間内で、ベストな回答を選択する実践ゲームです。あなたの選んだ回答で面接官の表情が変わり、最後に運命の合否が判定されます！
+    </div>
+
+    <button class="btn" onclick="startStep1()">ゲームスタート！</button>
+  </div>
+
+  <!-- Step1: 質問選択画面 -->
+  <div id="screen-step1-select" class="screen">
+    <h2>Step1: 自己分析の深掘り</h2>
+    <p class="step-desc">
+      ここでは「面接官がどんな角度からツッコミを入れてくるか」を知る練習をします。<br>
+      まずは質問に対して、自分の考えに一番近い選択肢を選んでみましょう！
+    </p>
+    <div id="step1-category-text" class="question-text"></div>
+    <div id="step1-options"></div>
+  </div>
+
+  <!-- Step1: 深掘り質問画面 -->
+  <div id="screen-step1-q" class="screen">
+    <h2>Step1: 深掘りタイム！</h2>
+    <p class="step-desc">実際の面接ではこのように深掘りされます。焦らず、自分の気持ちに近いものを選んでください。</p>
+    <div id="step1-q-text" class="question-text"></div>
+    <div id="step1-q-options"></div>
+  </div>
+
+  <!-- Step2: 面接ゲーム画面 -->
+  <div id="screen-step2" class="screen">
+    <h2>Step2: 本番面接ゲーム</h2>
+    <div class="progress-container">
+      <div id="step2-progress" class="progress-bar"></div>
+    </div>
+    <div id="step2-progress-text">Q 1 / 10</div>
+    <div class="timer">残り時間: <span id="timer-display">20</span>秒</div>
+    
+    <!-- 結果と次に進むボタンを上段に配置 -->
+    <div id="step2-feedback" class="feedback-box"></div>
+    <button id="step2-next-btn" class="btn" style="display:none; margin-bottom: 20px;" onclick="nextStep2Question()">次に進む</button>
+    
+    <div id="step2-q-text" class="question-text"></div>
+    <div id="step2-options"></div>
+  </div>
+
+  <!-- 結果画面 -->
+  <div id="screen-result" class="screen">
+    <h2>🎯 最終結果 🎯</h2>
+    <div class="question-text" id="result-score" style="font-size:2rem; color:#E91E63;"></div>
+    <p id="result-comment" style="font-size:1.2rem; font-weight:bold;"></p>
+    <button class="btn" onclick="location.reload()">もう一度始める</button>
+  </div>
+</div>
+
+<script>
+function playBuzzer() {
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    
+    oscillator.type = 'sawtooth';
+    oscillator.frequency.setValueAtTime(120, audioCtx.currentTime); 
+    
+    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    oscillator.start();
+    setTimeout(() => {
+      oscillator.stop();
+    }, 500);
+  } catch(e) {
+    console.log("Audio not supported in this browser.");
+  }
+}
+
+// --- Step1 用データ ---
+const step1Categories = [
+  {
+    title: "高校時代頑張ったことは何ですか？",
+    options: ["部活", "勉強", "アルバイト", "休まないこと", "友人関係", "文化祭", "ボランティア活動"],
+    followups: [
+      {
+        q1: "なぜそれに取り組もうと思ったのですか？",
+        q1Opts: [
+          "自分を限界まで成長させたかったからです",
+          "純粋に面白そうだと興味を持ったからです",
+          "友人や先生から強く勧められたからです",
+          "将来の仕事や目標に直結すると思ったからです",
+          "自分の苦手意識をどうしても克服したかったからです"
+        ],
+        q2: "その中で一番苦労したことは何ですか？",
+        q2Opts: [
+          "毎日同じことの繰り返しでモチベーションを保つことです",
+          "意見が合わない周囲の人と意見を調整することです",
+          "学業や他の活動と並行するための時間のやりくりです",
+          "努力してもすぐには結果が出なかった時の焦りです",
+          "予想以上に体力的・精神的な負担が大きかったことです"
+        ]
+      },
+      {
+        q1: "その経験から学んだことは何ですか？",
+        q1Opts: [
+          "途中で投げ出さずに最後まで諦めないことの大切さです",
+          "一人ではなくチームで協力することの重要性です",
+          "目標から逆算して計画的に進めることの意義です",
+          "失敗を恐れず、失敗から改善点を見つける姿勢です",
+          "相手の立場に立って物事を考えることの必要性です"
+        ],
+        q2: "その学びを社会でどう活かしますか？",
+        q2Opts: [
+          "困難で地味な業務にも粘り強く取り組み成果を出します",
+          "周囲と積極的にコミュニケーションを取り協力します",
+          "優先順位をつけて効率的なスケジュール管理を行います",
+          "ミスを恐れず、常に新しいやり方に挑戦し続けます",
+          "お客様や仲間の隠れたニーズを汲み取って行動します"
+        ]
+      }
+    ]
+  },
+  {
+    title: "あなたの強みは何ですか？",
+    options: ["協調性・周りを見る力", "継続力・粘り強さ", "主体性・実行力", "計画性・探究心・工夫する力", "責任感・誠実さ", "柔軟性・ストレス耐性", "発想力・チャレンジ精神"],
+    followups: [
+      {
+        q1: "その強みが一番発揮されたエピソードを教えてください。",
+        q1Opts: [
+          "学校行事や部活でリーダーシップをとった経験です",
+          "毎日欠かさず地道なルーティンを継続し続けたことです",
+          "グループ内で意見が対立した際に調整役に入ったことです",
+          "誰もやりたがらない課題に率先して取り組んだ経験です",
+          "後輩の悩みを聞き、個別にサポートして成果を出させたことです"
+        ],
+        q2: "その時、周囲からはどんな反応がありましたか？",
+        q2Opts: [
+          "「あなたがいてくれて本当に助かった」と感謝されました",
+          "「見違えるように変わったね」と成長を認められました",
+          "「いざという時に頼りになる」と信頼を得られました",
+          "「あなたのおかげでチームがまとまった」と言われました",
+          "直接言われませんでしたが、行動と結果で周りを動かせました"
+        ]
+      },
+      {
+        q1: "逆に、その強みが裏目に出たことはありますか？",
+        q1Opts: [
+          "責任感が強すぎて、一人で仕事を抱え込んでしまいました",
+          "石橋を叩いて渡る性格で、行動に移すのが遅れました",
+          "良かれと思って自分の意見を少し押し付けてしまいました",
+          "熱中するあまり、周囲のペースを乱してしまいました",
+          "細かい部分にこだわりすぎて、全体の進行を遅らせました"
+        ],
+        q2: "それをどのように克服しようとしていますか？",
+        q2Opts: [
+          "限界が来る前に、早めに周囲の先輩や友人に相談しています",
+          "考えすぎる前に「まず行動してから考える」ルールにしました",
+          "自分の意見を言う前に、まず相手の意見を聞くようにしています",
+          "常に全体のスケジュールや進捗を俯瞰して確認しています",
+          "「ここまではやる」という妥協点の期限を決めて取り組んでいます"
+        ]
+      }
+    ]
+  }
+];
+
+// --- Step2 用データ ---
+const step2AllQuestions = [
+  {
+    q: "当社を志望した理由を教えてください。",
+    opts: [
+      { text: "貴社の製品への熱意と温かい雰囲気に惹かれました。「ここで一緒に成長したい！」と直感しました。", score: 5 },
+      { text: "貴社の地域社会に根ざした事業展開と徹底した品質管理体制に深く感銘を受けたためです。", score: 4 },
+      { text: "貴社の製品づくりに対する姿勢に惹かれたからです。素晴らしい現場で一緒に働きたいと感じました。", score: 3 },
+      { text: "貴社の高品質な製品づくりに魅力を感じたからです。", score: 2 },
+      { text: "ものづくりに携わりたいからです。", score: 1 }
+    ]
+  },
+  {
+    q: "あなたの長所（強み）と具体的なエピソードを教えてください。",
+    opts: [
+      { text: "地道にコツコツ続けられる力です。毎朝30分の自主練を休まず続け、一番の努力家だと認められました。", score: 5 },
+      { text: "継続力であります。中高の6年間、日々の自主トレーニングを計画的かつ愚直に継続してまいりました。", score: 4 },
+      { text: "継続力です。雨の日も自主練習を一度も休まず続け、自己ベストを更新できました。", score: 3 },
+      { text: "継続力です。一度決めたことは最後まで諦めずにやり遂げます。", score: 2 },
+      { text: "継続力があるところです。", score: 1 }
+    ]
+  },
+  {
+    q: "高校生活の中で、一番印象に残っている出来事は何ですか？",
+    opts: [
+      { text: "文化祭のクラス演劇です。背景衣装の責任者として放課後遅くまで試行錯誤し、力を合わせる楽しさを学びました。", score: 5 },
+      { text: "文化祭の舞台装飾の責任者としての経験です。工程管理の徹底を図り、組織運営の重要性を体得いたしました。", score: 4 },
+      { text: "文化祭のクラス演劇です。大道具の責任者を務め、全員で協力してクラス賞を受賞できたことです。", score: 3 },
+      { text: "文化祭です。クラスで劇を行って、みんなで協力して成功させたことが思い出です。", score: 2 },
+      { text: "文化祭で劇をやったことです。", score: 1 }
+    ]
+  },
+  {
+    q: "入社後、仕事で壁にぶつかったり失敗したとき、どう対処しますか？",
+    opts: [
+      { text: "素直に謝罪し、すぐに指示を仰ぎます。原因を分析し、メモに残して前向きに改善へ繋げます！", score: 5 },
+      { text: "状況を把握し、上司への報・連・相を徹底します。その後再発防止策を明確化し改善を図ります。", score: 4 },
+      { text: "すぐに報告・相談し指示を仰ぎます。原因と改善策をメモに残して次に活かせるよう意識します。", score: 3 },
+      { text: "すぐに先輩や上司に報告して謝り、どうすればいいかアドバイスをもらいます。", score: 2 },
+      { text: "先輩に怒られないように自分でなんとか直します。", score: 1 }
+    ]
+  },
+  {
+    q: "遅刻や欠席をしないために、日頃から心がけていることはありますか？",
+    opts: [
+      { text: "「15分前行動」を徹底しています！予期せぬトラブルでも焦らないよう一本早い電車に乗る習慣があります。", score: 5 },
+      { text: "予期せぬ乱れを想定し、常に15分前に到着する行動計画を策定しております。", score: 4 },
+      { text: "「10分前行動」を意識し、前日に準備を済ませ目覚ましを2つセットしています。", score: 3 },
+      { text: "目覚まし時計を複数かけて、時間に余裕を持って家を出るようにしています。", score: 2 },
+      { text: "朝は起こしてもらうようにしています。", score: 1 }
+    ]
+  },
+  {
+    q: "友人と意見が分かれたとき、あなたはどのように話し合いを進めますか？",
+    opts: [
+      { text: "「どうすればお互い納得できるか」を考え、お互いの良いところを合わせた第3の案を探します！", score: 5 },
+      { text: "感情論を排除し、理由や根拠を明確化します。共通の目標に向けて折衷案を導き出します。", score: 4 },
+      { text: "相手の言い分を最後まで聞き、自分の意見も伝えて、落としどころをじっくり話し合います。", score: 3 },
+      { text: "お互いの意見を言い合って、じゃんけんや多数決などで決めます。", score: 2 },
+      { text: "自分の意見を押し通さず、相手に合わせます。", score: 1 }
+    ]
+  },
+  {
+    q: "普段、ストレスを感じたときはどのように解消していますか？",
+    opts: [
+      { text: "「身体を動かして思いっきり汗をかくこと」です！オンとオフを切り替えて明日に備えます！", score: 5 },
+      { text: "有酸素運動や趣味の時間を計画的に組み込み、ストレスを翌日に持ち越さず解消します。", score: 4 },
+      { text: "休日に好きな音楽を聴いたり、ジョギングをしたりして気分転換し気持ちをリセットします。", score: 3 },
+      { text: "美味しいものを食べたり、睡眠をとって体を休めるようにしています。", score: 2 },
+      { text: "ゲームをしたり寝たりしてリフレッシュします。", score: 1 }
+    ]
+  },
+  {
+    q: "同時に複数のやるべきことが重なったとき、どのように優先順位をつけますか？",
+    opts: [
+      { text: "「締め切り」と「重要度」でメモに書き出します！一人で抱えきれない時は周囲に相談します！", score: 5 },
+      { text: "タスクの可視化を行い、緊急度と重要度のマトリクスによる優先順位の設定を実施いたします。", score: 4 },
+      { text: "すべてのタスクを紙に書き出し、緊急度と重要度で整理してスケジュールを組みます。", score: 3 },
+      { text: "締め切りが早いものから順番にメモを書いてこなすようにしています。", score: 2 },
+      { text: "焦らず目の前にあるものから順番にやっていきます。", score: 1 }
+    ]
+  },
+  {
+    q: "本日の面接の自己採点をするとしたら、何点ですか？",
+    opts: [
+      { text: "85点です！熱意と元気な挨拶は絶対にお伝えできました。残りは今後の伸びしろとします！", score: 5 },
+      { text: "80点です。熱意や強みは論理的に論じられましたが、緊張による硬さが今後の課題です。", score: 4 },
+      { text: "80点です。緊張しましたが、入社したい熱意は嘘偽りなくお伝えできたと思います。", score: 3 },
+      { text: "50点です。とても緊張してしまって、うまくしゃべれなかったからです。", score: 2 },
+      { text: "100点です。完璧に答えられたと思うからです。", score: 1 }
+    ]
+  },
+  {
+    q: "社会人になるにあたって、今から意識して取り組んでいることはありますか？",
+    opts: [
+      { text: "誰よりも元気な挨拶と時間を守る行動です。当たり前のことを完璧にできる社会人を目指します！", score: 5 },
+      { text: "規律ある生活習慣の定着と、時事問題の情報収集の習慣化を図っています。", score: 4 },
+      { text: "早寝早起きで生活リズムを整え、ニュースを見る時間を設けています。", score: 3 },
+      { text: "毎朝遅刻をしないように早起きをして、生活リズムを整えています。", score: 2 },
+      { text: "特に意識していませんが、体調に気をつけています。", score: 1 }
+    ]
+  }
+];
+
+// --- アプリケーションの状態管理 ---
+let currentScreen = "top";
+let step1MainIndex = 0; 
+let step1LoopCount = 0;
+let currentFollowup = null;
+
+let step2Questions = [];
+let step2CurrentQIndex = 0;
+let step2Score = 0;
+let timerInterval;
+
+function showScreen(screenId) {
+  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+  document.getElementById('screen-' + screenId).classList.add('active');
+}
+
+// --- Step1 の処理 ---
+function startStep1() {
+  step1MainIndex = 0;
+  loadStep1Category();
+}
+
+function loadStep1Category() {
+  if (step1MainIndex >= step1Categories.length) {
+    startStep2();
+    return;
+  }
+  showScreen('step1-select');
+  const cat = step1Categories[step1MainIndex];
+  document.getElementById('step1-category-text').innerText = cat.title;
+  
+  const optsDiv = document.getElementById('step1-options');
+  optsDiv.innerHTML = "";
+  cat.options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerText = opt;
+    btn.onclick = () => {
+      step1LoopCount = 0;
+      startStep1Followup();
+    };
+    optsDiv.appendChild(btn);
+  });
+}
+
+function startStep1Followup() {
+  if (step1LoopCount >= 2) {
+    step1MainIndex++;
+    loadStep1Category();
+    return;
+  }
+  const cat = step1Categories[step1MainIndex];
+  currentFollowup = cat.followups[step1LoopCount];
+  showStep1Q(currentFollowup.q1, currentFollowup.q1Opts, true);
+}
+
+function showStep1Q(question, options, isFirst) {
+  showScreen('step1-q');
+  document.getElementById('step1-q-text').innerText = question;
+  const optsDiv = document.getElementById('step1-q-options');
+  optsDiv.innerHTML = "";
+  
+  const shuffledOptions = shuffle([...options]);
+  shuffledOptions.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerText = opt;
+    btn.onclick = () => {
+      if (isFirst) {
+        showStep1Q(currentFollowup.q2, currentFollowup.q2Opts, false);
+      } else {
+        step1LoopCount++;
+        startStep1Followup();
+      }
+    };
+    optsDiv.appendChild(btn);
+  });
+}
+
+// --- Step2 の処理 ---
+function shuffle(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
+function startStep2() {
+  alert("Step1お疲れ様でした！続いて、時間を計る本番面接ゲーム(Step2)に移ります！");
+  step2Score = 0;
+  step2CurrentQIndex = 0;
+  step2Questions = shuffle([...step2AllQuestions]).slice(0, 10);
+  showScreen('step2');
+  loadStep2Question();
+}
+
+function loadStep2Question() {
+  if (step2CurrentQIndex >= step2Questions.length) {
+    showResult();
+    return;
+  }
+  
+  const qData = step2Questions[step2CurrentQIndex];
+  
+  document.getElementById('step2-feedback').style.display = 'none';
+  document.getElementById('step2-next-btn').style.display = 'none';
+  
+  // 質問や選択肢の非表示・透明化はせず、ポインターイベントのみ戻す
+  document.getElementById('step2-options').style.pointerEvents = 'auto';
+  document.getElementById('step2-q-text').style.opacity = '1';
+  document.getElementById('step2-options').style.opacity = '1';
+  
+  document.getElementById('step2-progress-text').innerText = `Q ${step2CurrentQIndex + 1} / 10`;
+  document.getElementById('step2-progress').style.width = `${((step2CurrentQIndex) / 10) * 100}%`;
+  
+  document.getElementById('step2-q-text').innerText = qData.q;
+  
+  const optsDiv = document.getElementById('step2-options');
+  optsDiv.innerHTML = "";
+  
+  const shuffledOpts = shuffle([...qData.opts]);
+  shuffledOpts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerText = opt.text;
+    btn.onclick = () => handleStep2Answer(opt.score);
+    optsDiv.appendChild(btn);
+  });
+  
+  startTimer();
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  let timeLeft = 20; 
+  const timerDisplay = document.getElementById('timer-display');
+  timerDisplay.innerText = timeLeft;
+  timerDisplay.style.color = "#E91E63";
+  
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    timerDisplay.innerText = timeLeft;
+    if (timeLeft <= 5) timerDisplay.style.color = "red";
+    
+    if (timeLeft <= 0) {
+      handleStep2Timeout();
+    }
+  }, 1000);
+}
+
+function handleStep2Timeout() {
+  clearInterval(timerInterval);
+  document.getElementById('step2-options').style.pointerEvents = 'none';
+  
+  // 視線誘導のため、質問と選択肢を少し薄くする
+  document.getElementById('step2-q-text').style.opacity = '0.5';
+  document.getElementById('step2-options').style.opacity = '0.5';
+  
+  playBuzzer(); 
+  
+  const fbBox = document.getElementById('step2-feedback');
+  fbBox.style.display = 'block';
+  fbBox.style.color = "#d32f2f";
+  fbBox.style.background = "#ffebee";
+  
+  fbBox.innerText = `【 失敗 】\n時間切れです... (獲得ポイント: 0点)\n\n「 面接官は険しい表情をしている... 」`;
+  document.getElementById('step2-next-btn').style.display = 'inline-block';
+}
+
+function handleStep2Answer(score) {
+  clearInterval(timerInterval);
+  document.getElementById('step2-options').style.pointerEvents = 'none';
+  
+  // 視線誘導のため、質問と選択肢を少し薄くする
+  document.getElementById('step2-q-text').style.opacity = '0.5';
+  document.getElementById('step2-options').style.opacity = '0.5';
+  
+  step2Score += score;
+  
+  const fbBox = document.getElementById('step2-feedback');
+  fbBox.style.display = 'block';
+  fbBox.style.background = "#E8F5E9"; 
+  
+  let comment = "";
+  if (score === 1) {
+    comment = "面接官は嫌な顔をしている";
+    fbBox.style.color = "#d32f2f";
+  } else if (score === 2) {
+    comment = "相手の表情は変わらない";
+    fbBox.style.color = "#f57c00";
+  } else if (score === 3) {
+    comment = "相手はメモを取っている";
+    fbBox.style.color = "#1976d2";
+  } else if (score === 4) {
+    comment = "面接官は笑顔になった";
+    fbBox.style.color = "#388e3c";
+  } else if (score === 5) {
+    comment = "笑顔で大きくうなずいている";
+    fbBox.style.color = "#2e7d32";
+  }
+  
+  fbBox.innerText = `獲得ポイント: ${score}点\n\n「 ${comment} 」`;
+  document.getElementById('step2-next-btn').style.display = 'inline-block';
+}
+
+function nextStep2Question() {
+  step2CurrentQIndex++;
+  loadStep2Question();
+}
+
+function showResult() {
+  showScreen('result');
+  document.getElementById('result-score').innerText = `合計得点：${step2Score} 点`;
+  
+  let resultMsg = "";
+  if (step2Score <= 13) {
+    resultMsg = "不合格。もう上農からは採用しないと学校側に連絡がありました・・・";
+  } else if (step2Score <= 25) {
+    resultMsg = "不合格。これからのあなたの活躍をお祈りしています・・・";
+  } else if (step2Score <= 40) {
+    resultMsg = "合格。無事、あなたは4月から社会人です";
+  } else {
+    resultMsg = "合格！ぜひあなたにはうちの会社に入っていただきたい。活躍は保証されています！";
+  }
+  document.getElementById('result-comment').innerText = resultMsg;
+}
+</script>
+
+</body>
+</html>
